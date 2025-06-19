@@ -98,6 +98,7 @@ const RegisterModelComponent = ({ modelType, customData }) => {
   const [isContextLengthAlert, setIsContextLengthAlert] = useState(false)
   const [isDimensionsAlert, setIsDimensionsAlert] = useState(false)
   const [isMaxTokensAlert, setIsMaxTokensAlert] = useState(false)
+  const [isMicroBsAlert, setIsMicroBsAlert] = useState(false)
   const [jsonData, setJsonData] = useState('')
   const [isSpecsArrError, setIsSpecsArrError] = useState(false)
   const [isValidLauncherArgsAlert, setIsValidLauncherArgsAlert] =
@@ -402,7 +403,8 @@ const RegisterModelComponent = ({ modelType, customData }) => {
       isSpecsArrError ||
       isContextLengthAlert ||
       isDimensionsAlert ||
-      isMaxTokensAlert
+      isMaxTokensAlert ||
+      isMicroBsAlert
     ) {
       setErrorMsg('Please fill in valid value for all fields')
       return
@@ -438,6 +440,7 @@ const RegisterModelComponent = ({ modelType, customData }) => {
     setIsContextLengthAlert(false)
     setIsDimensionsAlert(false)
     setIsMaxTokensAlert(false)
+    setIsMicroBsAlert(false)
     setFormData({ ...formData, [parameterName]: value })
 
     if (
@@ -449,6 +452,7 @@ const RegisterModelComponent = ({ modelType, customData }) => {
       parameterName === 'context_length' ? setIsContextLengthAlert(true) : ''
       parameterName === 'dimensions' ? setIsDimensionsAlert(true) : ''
       parameterName === 'max_tokens' ? setIsMaxTokensAlert(true) : ''
+      parameterName === 'micro_bs' ? setIsMicroBsAlert(true) : ''
     } else if (value !== '') {
       setFormData({ ...formData, [parameterName]: Number(value) })
     }
@@ -904,6 +908,27 @@ const RegisterModelComponent = ({ modelType, customData }) => {
                 }}
               />
               {isMaxTokensAlert && (
+                <Alert severity="error">
+                  {t('registerModel.enterIntegerGreaterThanZero')}
+                </Alert>
+              )}
+              <Box padding="15px"></Box>
+            </>
+          )}
+
+          {/* Micro Batch Size */}
+          {customData.micro_bs && (
+            <>
+              <TextField
+                label="micro_bs"
+                error={Number(formData.micro_bs) > 0 ? false : true}
+                value={formData.micro_bs}
+                size="small"
+                onChange={(event) => {
+                  handleNumber(event.target.value, 'micro_bs')
+                }}
+              />
+              {isMicroBsAlert && (
                 <Alert severity="error">
                   {t('registerModel.enterIntegerGreaterThanZero')}
                 </Alert>
@@ -1420,6 +1445,7 @@ const RegisterModelComponent = ({ modelType, customData }) => {
                 isContextLengthAlert ||
                 isDimensionsAlert ||
                 isMaxTokensAlert ||
+                isMicroBsAlert ||
                 formData.model_lang?.length === 0 ||
                 formData.language?.length === 0 ||
                 formData.model_ability?.length === 0 ||

@@ -87,6 +87,8 @@ const ModelCard = ({
   const [selected, setSelected] = useState(false)
   const [requestLimitsAlert, setRequestLimitsAlert] = useState(false)
   const [GPUIdxAlert, setGPUIdxAlert] = useState(false)
+  const [maxTokensAlert, setMaxTokensAlert] = useState(false)
+  const [microBsAlert, setMicroBsAlert] = useState(false)
   const [isOther, setIsOther] = useState(false)
   const [isPeftModelConfig, setIsPeftModelConfig] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -112,6 +114,8 @@ const ModelCard = ({
   const [GPUIdx, setGPUIdx] = useState('')
   const [downloadHub, setDownloadHub] = useState('')
   const [modelPath, setModelPath] = useState('')
+  const [maxTokens, setMaxTokens] = useState('')
+  const [microBs, setMicroBs] = useState('')
   const [enableThinking, setEnableThinking] = useState(true)
   const [reasoningContent, setReasoningContent] = useState(false)
   const [ggufQuantizations, setGgufQuantizations] = useState('')
@@ -370,17 +374,21 @@ const ModelCard = ({
       model_path: modelPath?.trim() === '' ? null : modelPath?.trim(),
     }
 
-    const modelDataWithID_other = {
-      model_uid: modelUID?.trim() === '' ? null : modelUID?.trim(),
-      model_name: modelData.model_name,
-      model_type: modelType,
-      replica: replica,
-      n_gpu: nGpu === 'GPU' ? 'auto' : null,
-      worker_ip: workerIp?.trim() === '' ? null : workerIp?.trim(),
-      gpu_idx: GPUIdx?.trim() === '' ? null : handleGPUIdx(GPUIdx?.trim()),
-      download_hub: downloadHub === '' ? null : downloadHub,
-      model_path: modelPath?.trim() === '' ? null : modelPath?.trim(),
-    }
+  const modelDataWithID_other = {
+    model_uid: modelUID?.trim() === '' ? null : modelUID?.trim(),
+    model_name: modelData.model_name,
+    model_type: modelType,
+    replica: replica,
+    n_gpu: nGpu === 'GPU' ? 'auto' : null,
+    worker_ip: workerIp?.trim() === '' ? null : workerIp?.trim(),
+    gpu_idx: GPUIdx?.trim() === '' ? null : handleGPUIdx(GPUIdx?.trim()),
+    download_hub: downloadHub === '' ? null : downloadHub,
+    model_path: modelPath?.trim() === '' ? null : modelPath?.trim(),
+    max_tokens:
+      String(maxTokens).trim() === '' ? null : Number(String(maxTokens).trim()),
+    micro_bs:
+      String(microBs).trim() === '' ? null : Number(String(microBs).trim()),
+  }
 
     if (multimodalProjector)
       modelDataWithID_LLM.multimodal_projector = multimodalProjector
@@ -808,6 +816,8 @@ const ModelCard = ({
     setWorkerIp(worker_ip || '')
     setDownloadHub(download_hub || '')
     setModelPath(model_path || '')
+    setMaxTokens(data.max_tokens || '')
+    setMicroBs(data.micro_bs || '')
     setGgufQuantizations(gguf_quantization || '')
     setGgufModelPath(gguf_model_path || '')
     setCpuOffload(cpu_offload || false)
@@ -895,6 +905,8 @@ const ModelCard = ({
       setGPUIdx('')
       setDownloadHub('')
       setModelPath('')
+      setMaxTokens('')
+      setMicroBs('')
       setEnableThinking(true)
       setReasoningContent(false)
       setLoraArr([])
@@ -911,6 +923,8 @@ const ModelCard = ({
       setWorkerIp('')
       setDownloadHub('')
       setModelPath('')
+      setMaxTokens('')
+      setMicroBs('')
       setGgufQuantizations('')
       setGgufModelPath('')
       setCpuOffload(false)
@@ -963,6 +977,7 @@ const ModelCard = ({
           GPUIdxAlert) &&
         !isShowCancel) ||
       ((modelType === 'embedding' || modelType === 'rerank') && GPUIdxAlert) ||
+      (modelType === 'rerank' && (maxTokensAlert || microBsAlert)) ||
       !judgeArr(customParametersArr, ['key', 'value']) ||
       !judgeArr(quantizationParametersArr, ['key', 'value'])
     )
@@ -2115,6 +2130,64 @@ const ModelCard = ({
                     onChange={(e) => setModelPath(e.target.value)}
                   />
                 </FormControl>
+                {modelType === 'rerank' && (
+                  <>
+                    <FormControl variant="outlined" margin="normal" fullWidth>
+                      <TextField
+                        className="textHighlight"
+                        value={maxTokens}
+                        type="number"
+                        InputProps={{ inputProps: { min: 1 } }}
+                        label={t('launchModel.maxTokens.optional')}
+                        onChange={(e) => {
+                          setMaxTokensAlert(false)
+                          setMaxTokens(e.target.value)
+                          if (
+                            e.target.value !== '' &&
+                            (!Number(e.target.value) ||
+                              Number(e.target.value) <= 0 ||
+                              parseInt(e.target.value) !==
+                                parseFloat(e.target.value))
+                          ) {
+                            setMaxTokensAlert(true)
+                          }
+                        }}
+                      />
+                      {maxTokensAlert && (
+                        <Alert severity="error">
+                          {t('launchModel.enterIntegerGreaterThanZero')}
+                        </Alert>
+                      )}
+                    </FormControl>
+                    <FormControl variant="outlined" margin="normal" fullWidth>
+                      <TextField
+                        className="textHighlight"
+                        value={microBs}
+                        type="number"
+                        InputProps={{ inputProps: { min: 1 } }}
+                        label={t('launchModel.microBs.optional')}
+                        onChange={(e) => {
+                          setMicroBsAlert(false)
+                          setMicroBs(e.target.value)
+                          if (
+                            e.target.value !== '' &&
+                            (!Number(e.target.value) ||
+                              Number(e.target.value) <= 0 ||
+                              parseInt(e.target.value) !==
+                                parseFloat(e.target.value))
+                          ) {
+                            setMicroBsAlert(true)
+                          }
+                        }}
+                      />
+                      {microBsAlert && (
+                        <Alert severity="error">
+                          {t('launchModel.enterIntegerGreaterThanZero')}
+                        </Alert>
+                      )}
+                    </FormControl>
+                  </>
+                )}
                 {modelData.gguf_quantizations && (
                   <FormControl variant="outlined" margin="normal" fullWidth>
                     <InputLabel id="quantization-label">
