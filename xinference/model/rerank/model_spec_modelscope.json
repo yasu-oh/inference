@@ -4,6 +4,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 512,
+    "micro_bs": 4,
     "model_id": "Xorbits/bge-reranker-base",
     "model_revision": "v0.0.1",
     "model_hub": "modelscope"
@@ -13,6 +14,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 512,
+    "micro_bs": 4,
     "model_id": "Xorbits/bge-reranker-large",
     "model_revision": "v0.0.1",
     "model_hub": "modelscope"
@@ -22,6 +24,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 512,
+    "micro_bs": 4,
     "model_id": "maidalun/bce-reranker-base_v1",
     "model_revision": "v0.0.1",
     "model_hub": "modelscope"
@@ -30,6 +33,7 @@
     "model_name": "bge-reranker-v2-m3",
     "type": "normal",
     "max_tokens": 8192,
+    "micro_bs": 4,
     "language": ["en", "zh", "multilingual"],
     "model_id": "AI-ModelScope/bge-reranker-v2-m3",
     "model_hub": "modelscope"
@@ -39,6 +43,7 @@
     "type": "LLM-based",
     "language": ["en", "zh", "multilingual"],
     "max_tokens": 8192,
+    "micro_bs": 4,
     "model_id": "AI-ModelScope/bge-reranker-v2-gemma",
     "model_hub": "modelscope"
   },
@@ -47,6 +52,7 @@
     "type": "LLM-based layerwise",
     "language": ["en", "zh", "multilingual"],
     "max_tokens": 2048,
+    "micro_bs": 4,
     "model_id": "mirror013/bge-reranker-v2-minicpm-layerwise",
     "model_hub": "modelscope"
   },
@@ -55,6 +61,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 1024,
+    "micro_bs": 4,
     "model_id": "OpenBMB/MiniCPM-Reranker",
     "model_hub": "modelscope"
   },
@@ -63,6 +70,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 32768,
+    "micro_bs": 4,
     "model_id": "Qwen/Qwen3-Reranker-0.6B",
     "model_hub": "modelscope"
   },
@@ -71,6 +79,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 32768,
+    "micro_bs": 4,
     "model_id": "Qwen/Qwen3-Reranker-4B",
     "model_hub": "modelscope"
   },
@@ -79,6 +88,7 @@
     "type": "normal",
     "language": ["en", "zh"],
     "max_tokens": 32768,
+    "micro_bs": 4,
     "model_id": "Qwen/Qwen3-Reranker-8B",
     "model_hub": "modelscope"
   }

@@ -109,6 +109,7 @@ const RegisterModel = () => {
               model_uri: '/path/to/rerank-model',
               language: ['en'],
               max_tokens: 512,
+              micro_bs: 4,
             }}
           />
         </TabPanel>

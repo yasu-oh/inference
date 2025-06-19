@@ -55,6 +55,7 @@ class RerankModelSpec(CacheableModelSpec):
     language: List[str]
     type: Optional[str] = "unknown"
     max_tokens: Optional[int]
+    micro_bs: Optional[int] = 4
     model_id: str
     model_revision: Optional[str]
     model_hub: str = "huggingface"
@@ -157,6 +158,7 @@ class RerankModel:
         self._model_path = model_path
         self._device = device
         self._model_config = model_config or dict()
+        self._micro_bs = self._model_config.pop("micro_bs", model_spec.micro_bs)
         self._use_fp16 = use_fp16
         self._model = None
         self._counter = 0
@@ -229,7 +231,9 @@ class RerankModel:
                 self._model_path,
                 device=self._device,
                 trust_remote_code=True,
-                max_length=getattr(self._model_spec, "max_tokens"),
+                max_length=self._model_config.get(
+                    "max_tokens", getattr(self._model_spec, "max_tokens")
+                ),
                 **self._model_config,
             )
             if self._use_fp16:
@@ -262,7 +266,9 @@ class RerankModel:
             model = self._model = AutoModelForCausalLM.from_pretrained(
                 self._model_path, **model_kwargs
             ).eval()
-            max_length = getattr(self._model_spec, "max_tokens")
+            max_length = self._model_config.get(
+                "max_tokens", getattr(self._model_spec, "max_tokens")
+            )
 
             prefix = (
                 "<|im_start|>system\nJudge whether the Document meets the requirements based on the Query "
@@ -371,7 +377,7 @@ class RerankModel:
                 return output
 
             # reduce memory usage.
-            micro_bs = 4
+            micro_bs = kwargs.pop("micro_bs", self._micro_bs or 4)
             similarity_scores = []
             for i in range(0, len(documents), micro_bs):
                 sub_docs = documents[i : i + micro_bs]
@@ -504,6 +510,10 @@ def create_rerank_model_instance(
                 f"Huggingface: {BUILTIN_RERANK_MODELS.keys()}"
                 f"ModelScope: {MODELSCOPE_RERANK_MODELS.keys()}"
             )
+    if "max_tokens" in kwargs and kwargs["max_tokens"] is not None:
+        model_spec.max_tokens = kwargs.pop("max_tokens")
+    if "micro_bs" in kwargs and kwargs["micro_bs"] is not None:
+        model_spec.micro_bs = kwargs.pop("micro_bs")
     if not model_path:
         model_path = cache(model_spec)
     use_fp16 = kwargs.pop("use_fp16", False)
